@@ -23,7 +23,7 @@ import axios from "axios";
 
 export const SignUpForm = () => {
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState("");
+  const [Error, setError] = useState("");
   const [success, setSuccess] = useState("");
 
   const form = useForm<z.infer<typeof SignUpSchema>>({
@@ -50,10 +50,10 @@ export const SignUpForm = () => {
       } else {
         console.log("Login Failed");
         setError(response.data.message);
+        console.log(Error)
       }
     } catch (error) {
       console.log("Login Failed [Client]", error);
-      console.log("Login Failed");
     } finally {
       setIsLoading(false);
     }
@@ -123,7 +123,7 @@ export const SignUpForm = () => {
               )}
             />
           </div>
-          <FormError message={error} />
+          <FormError message={Error} />
           <FormSucess message={success} />
 
           <Button disabled={isLoading} type="submit" className="w-full">

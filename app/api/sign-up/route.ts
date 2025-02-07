@@ -1,6 +1,8 @@
 
 import { SignUpSchema } from "@/schemas"
 import { NextResponse } from "next/server"
+import bcrypt from "bcrypt";
+import { addUser, getUserByEmail } from "@/db/queries";
 
 // create account
 export async function POST(req:Request){
@@ -13,9 +15,23 @@ export async function POST(req:Request){
         if (!validatedFields.success) {
             return NextResponse.json({message:"Invalid details"},{status:401})
         }
-        console.log(validatedFields)
+        // 
+        const { email, name, password } = validatedFields.data
+        const hashedPassword = await bcrypt.hash(password,10)
 
-        return NextResponse.json({message:"Email Sent!"},{status:200})
+        const existingUser = await getUserByEmail(email);
+
+
+        if (existingUser) {
+            // console.log(existingUser)
+            return NextResponse.json({message:"Email already in user!"},{status:201})
+        }
+        //add new user
+        await addUser(email,name,hashedPassword)
+
+        //TODO: send verification email
+
+        return NextResponse.json({message:"User account created"},{status:200})
         
 
     } catch (error) {
